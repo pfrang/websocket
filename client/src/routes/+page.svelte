@@ -16,6 +16,13 @@
 		connection = new Socket(onMessage);
 	}
 
+	function onSubmit(e: Event) {
+		if (message.trim() === '') return;
+		e.preventDefault();
+		sendMessage();
+		message = '';
+	}
+
 	function sendMessage() {
 		const payload: Message = {
 			user,
@@ -35,14 +42,23 @@
 		<p class="text-red-500">Not connected</p>
 	{/if}
 	<div class="flex flex-col gap-4">
-		<form>
-			<input type="text" id="user" placeholder="Username" bind:value={user} />
-			<button type="submit" onclick={() => connect()}>Connect</button>
-		</form>
-		<form>
-			<input type="text" id="message" placeholder="Message" bind:value={message} />
-			<button type="submit" onclick={sendMessage}>Send</button>
-		</form>
+		{#if !connection}
+			<form
+				onsubmit={(e) => {
+					e.preventDefault();
+					connect();
+				}}
+			>
+				<input required type="text" id="user" placeholder="Username" bind:value={user} />
+				<button type="submit">Connect</button>
+			</form>
+		{:else}
+			<p>Connected as <strong>{user}</strong></p>
+			<form onsubmit={onSubmit}>
+				<input required type="text" id="message" placeholder="Message" bind:value={message} />
+				<button type="submit">Send</button>
+			</form>
+		{/if}
 	</div>
 	{#if messages.length > 0}
 		<div class="mt-4">
