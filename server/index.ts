@@ -1,7 +1,4 @@
-interface Data {
-  authToken: string;
-}
-const connections = new Set<Bun.ServerWebSocket<Data>>();
+const connections = new Set<Bun.ServerWebSocket<unknown>>();
 
 const server = Bun.serve({
   fetch(req, server) {
@@ -16,9 +13,6 @@ const server = Bun.serve({
     return new Response("Hello world!");
   },
   websocket: {
-    // TypeScript: specify the type of ws.data like this
-    data: {} as { authToken: string },
-
     async open(ws) {
       console.log("WebSocket connection opened");
       connections.add(ws);
